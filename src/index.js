@@ -1,4 +1,5 @@
 const SentryCli = require('@sentry/cli');
+const helper = require('@sentry/cli/js/helper');
 const path = require('path');
 
 function injectEntry(originalEntry, newEntry) {
@@ -97,6 +98,9 @@ class SentryCliPlugin {
         })
         .then(() =>
           sentryCli.releases.uploadSourceMaps(this.options.release, this.options)
+        )
+        .then(() =>
+          this.options.setcommit ? helper.execute(['releases', 'set-commits', "--auto", this.options.release ]) : ''
         )
         .then(() => sentryCli.releases.finalize(this.options.release))
         .then(() => cb())
